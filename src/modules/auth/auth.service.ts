@@ -1,20 +1,20 @@
 import bcrypt from "bcryptjs";
-import type { RUser } from "../../types";
 import { pool } from "../../db";
 import jwt, { type SignOptions } from "jsonwebtoken";
 import config from "../../config";
+import type { IUser } from "./auth.interface";
 
 class AuthService {
   // 1. Create User
-  async createUser(user: RUser & { password: string }) {
+  async createUser(user: IUser) {
     const { name, email, password, role } = user;
 
     const hashPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
       `
-        INSERT INTO users (name, email, password_hash, role)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO users (name, email, password, role)
+        VALUES ($1, $2, $3, COALESCE($4, 'contributor'))
         RETURNING *
         `,
       [name, email, hashPassword, role],
@@ -23,7 +23,7 @@ class AuthService {
     const newUser = result.rows[0];
 
     // Remove password_hash
-    delete newUser.password_hash;
+    delete newUser.password;
 
     return newUser;
   }
@@ -46,7 +46,7 @@ class AuthService {
     }
 
     // Compare the password using bcrypt in between server and database
-    const isPasswordMatch = await bcrypt.compare(password, user.password_hash);
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     // Check if the password is correct or not
     if (!isPasswordMatch) {
@@ -58,6 +58,7 @@ class AuthService {
     const jwtPayload = {
       id: user.id,
       name: user.name,
+      email: user.email,
       role: user.role,
     };
 
@@ -66,7 +67,7 @@ class AuthService {
     } as SignOptions);
 
     // Remove password_hash
-    delete user.password_hash;
+    delete user.password;
 
     return {
       token: accessToken,
