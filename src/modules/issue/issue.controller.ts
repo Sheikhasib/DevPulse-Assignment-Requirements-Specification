@@ -1,8 +1,8 @@
-// 3. Create Issue
-
 import type { Request, Response } from "express";
 import sendResponse from "../../utils/sendResponse";
 import { issueService } from "./issue.service";
+
+// 3. Create Issue
 
 const createIssue = async (req: Request, res: Response) => {
   //   console.log("From issue controller: ", req.user);
