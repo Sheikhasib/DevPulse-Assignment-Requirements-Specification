@@ -18,7 +18,7 @@ app.use(loggeer); // Custom Middleware
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    message: "Welcome to DevPulse Issue Tracker API",
+    message: "Welcome to BugNest Issue Tracker API",
   });
 });
 
