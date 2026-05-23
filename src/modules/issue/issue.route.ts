@@ -20,5 +20,17 @@ router.get("/", issueController.getAllIssues);
 
 router.get("/:id", issueController.getSingleIssue);
 
+// 6. Update Issue
+
+router.patch(
+  "/:id",
+  auth(USER_ROLES.contributor, USER_ROLES.maintainer),
+  issueController.updateIssue,
+);
+
+// 7. Delete Issue
+
+router.delete("/:id", auth(USER_ROLES.maintainer), issueController.deleteIssue);
+
 // Export Issue Router to be used as middleware in app.ts
 export const issueRouter = router;

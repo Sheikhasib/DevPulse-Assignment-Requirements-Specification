@@ -80,9 +80,63 @@ const getSingleIssue = async (req: Request, res: Response) => {
   }
 };
 
+// 6. Update Issue
+
+const updateIssue = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { role, id: userId } = req.user!;
+  try {
+    const issue = await issueService.updateIssueIntoDB(
+      id as string,
+      req.body,
+      role,
+      userId,
+    );
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      //   message: "Retrieved all issues successfully",
+      data: issue,
+    });
+  } catch (error: any) {
+    sendResponse(res, {
+      statusCode: 500,
+      success: false,
+      message: error.message,
+      error: error,
+    });
+  }
+};
+
+// 7. Delete Issue
+
+const deleteIssue = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const issue = await issueService.deleteIssueFromDB(id as string);
+
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      //   message: "Issue deleted successfully",
+      //   data: issue,
+    });
+  } catch (error: any) {
+    sendResponse(res, {
+      statusCode: 500,
+      success: false,
+      message: error.message,
+      error: error,
+    });
+  }
+};
+
 // Export Issue Controller to be used as middleware in issue.route.ts
 export const issueController = {
   createIssue,
   getAllIssues,
   getSingleIssue,
+  updateIssue,
+  deleteIssue,
 };

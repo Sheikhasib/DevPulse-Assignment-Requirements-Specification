@@ -136,9 +136,90 @@ const getSingleIssueFromDB = async (id: string) => {
   };
 };
 
+// 6. Update Issue
+
+const updateIssueIntoDB = async (
+  id: string,
+  body: Partial<IIssue>,
+  role: string,
+  userId: number,
+) => {
+  // First get the issue
+  const issues = await pool.query(
+    `
+        SELECT * FROM issues
+        WHERE id = $1
+    `,
+    [id],
+  );
+
+  // If no issue found, throw error
+  if (issues.rows.length === 0) {
+    throw new Error("Issue not found");
+  }
+
+  const issue = issues.rows[0];
+
+  // Contributor can only update their own issue and only if status is open
+  if (role === "contributor") {
+    if (issue.reporter_id !== userId) {
+      throw new Error("You can only update your own issue");
+    }
+    if (issue.status !== "open") {
+      throw new Error("You can only update an issue with status open");
+    }
+  }
+
+  // Maintainer can update any issue
+  const { title, description, type } = body;
+
+  const result = await pool.query(
+    `
+      UPDATE issues
+      SET
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        type = COALESCE($3, type),
+        updated_at = NOW()
+      WHERE id = $4
+      RETURNING *
+    `,
+    [title, description, type, id],
+  );
+
+  return result.rows[0]; // Return updated issue rows[0] => data
+};
+
+// 7. Delete Issue
+
+const deleteIssueFromDB = async (id: string) => {
+  const issues = await pool.query(
+    `
+        SELECT * FROM issues
+        WHERE id = $1
+    `,
+    [id],
+  );
+
+  // If no issue found, throw error
+  if (issues.rows.length === 0) {
+    throw new Error("Issue not found");
+  }
+
+  const result = await pool.query(
+    `
+        DELETE FROM issues
+        WHERE id = $1
+        RETURNING *
+    `,
+  );
+};
+
 // Export Issue Service to be used as middleware in issue.controller.ts
 export const issueService = {
   createIssueIntoDB,
   getAllIssuesFromDB,
   getSingleIssueFromDB,
+  updateIssueIntoDB,
+  deleteIssueFromDB,
 };
