@@ -212,6 +212,7 @@ const deleteIssueFromDB = async (id: string) => {
         WHERE id = $1
         RETURNING *
     `,
+    [id],
   );
 };
 
