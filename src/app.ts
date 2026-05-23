@@ -14,11 +14,11 @@ const app: Application = express();
 app.use(express.json());
 app.use(loggeer); // Custom Middleware
 
+// Root Route
 app.get("/", (req: Request, res: Response) => {
-  //   res.send("Hello World!!!");
   res.status(200).json({
-    message: "Exploring Express server",
-    author: "Next Level Web Development",
+    success: true,
+    message: "Welcome to DevPulse Issue Tracker API",
   });
 });
 

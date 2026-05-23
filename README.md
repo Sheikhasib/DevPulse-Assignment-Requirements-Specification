@@ -1,4 +1,4 @@
-# DevPulse 🚀
+# BugNest 🐛
 
 > Internal Tech Issue & Feature Tracker — A collaborative platform for software teams to report bugs, suggest features, and coordinate resolutions.
 
@@ -220,7 +220,7 @@ npm run dev
 
 ## Project Structure
 
-```
+```text
 src/
 ├── config/         # Environment config
 ├── db/             # Database connection & init

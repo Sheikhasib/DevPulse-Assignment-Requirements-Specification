@@ -54,7 +54,8 @@ const auth = (...roles: ROLES[]) => {
         return sendResponse(res, {
           statusCode: 403,
           success: false,
-          message: "Forbidden Access!!",
+          message:
+            "Forbidden Access. You are not authorized to perform this action!!",
         });
       }
 
