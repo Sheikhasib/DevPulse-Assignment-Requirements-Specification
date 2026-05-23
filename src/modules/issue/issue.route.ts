@@ -16,5 +16,9 @@ router.post(
 // 4. Get All Issues
 router.get("/", issueController.getAllIssues);
 
+// 5. Get Single Issue
+
+router.get("/:id", issueController.getSingleIssue);
+
 // Export Issue Router to be used as middleware in app.ts
 export const issueRouter = router;
