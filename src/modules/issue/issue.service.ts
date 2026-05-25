@@ -44,15 +44,17 @@ const getAllIssuesFromDB = async (
 
   const issues = await pool.query(query, params);
 
-  //   const issues = await pool.query(
-  //     `
-  //     SELECT * FROM issues
-  //     `
-  //   );
+  // Without dynamic query
+  // const issues = await pool.query(
+  //   `
+  //   SELECT * FROM issues
+  //   `
+  // );
 
   // If no issues found, return empty array
   if (issues.rows.length === 0) {
     return [];
+    // throw new Error("No issues found");
   }
 
   // Fetching reporters
@@ -85,7 +87,7 @@ const getAllIssuesFromDB = async (
     description: issue.description,
     type: issue.type,
     status: issue.status,
-    reporter: issue.reporter, // Add reporter
+    reporter: issue.reporter, // Add reporter, nested reporter object
     created_at: issue.created_at,
     updated_at: issue.updated_at,
   }));
